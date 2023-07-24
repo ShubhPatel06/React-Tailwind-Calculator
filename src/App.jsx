@@ -2,6 +2,16 @@ import { useState } from "react";
 import Button from "./components/button";
 
 function App() {
+  const [calc, setCalc] = useState({
+    firstOperand: "",
+    operation: "",
+    secondOperand: "",
+  });
+
+  const handleNumClick = (val) => {
+    console.log(val);
+  };
+
   return (
     <main className="bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 h-screen flex items-center justify-center">
       <div className="calculator-box grid  w-[27rem] gap-3">
@@ -10,13 +20,21 @@ function App() {
           <div className="current-operant">6789</div>
         </div>
         <div className="buttons-box grid grid-cols-4 gap-2">
-          <Button value={"CLR"} additionalClasses={"col-span-2"} />
+          <Button
+            value={"CLR"}
+            additionalClasses={"col-span-2 bg-white p-5 hover:bg-slate-200"}
+          />
           <Button value={"DEL"} />
           <Button
             value={"÷"}
             additionalClasses={"bg-orange-300 hover:bg-orange-400"}
           />
-          <Button value={1} />
+          <Button
+            value={1}
+            onClick={() => {
+              handleNumClick(1);
+            }}
+          />
           <Button value={2} />
           <Button value={3} />
           <Button
@@ -39,7 +57,10 @@ function App() {
           />
           <Button value={0} />
           <Button value={"."} />
-          <Button value={"="} additionalClasses={"col-span-2 "} />
+          <Button
+            value={"="}
+            additionalClasses={"col-span-2 bg-white p-5 hover:bg-slate-200"}
+          />
         </div>
       </div>
     </main>

@@ -1,9 +1,14 @@
 import React from "react";
 
-const Button = ({ value, additionalClasses }) => {
+const Button = ({ value, additionalClasses, onClick }) => {
   return (
     <button
-      className={`bg-white p-5 text-xl font-bold rounded-md hover:bg-slate-200 ${additionalClasses}`}
+      className={` text-xl font-bold rounded-md  ${
+        additionalClasses
+          ? additionalClasses
+          : "bg-white p-5 hover:bg-slate-200"
+      }`}
+      onClick={onClick}
     >
       {value}
     </button>
