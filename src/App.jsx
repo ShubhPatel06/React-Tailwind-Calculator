@@ -6,13 +6,32 @@ function App() {
     firstOperand: "",
     operation: "",
     secondOperand: "",
+    result: "",
   });
 
   const handleNumClick = (val) => {
-    if (calc.operation === "") {
-      setCalc({ ...calc, firstOperand: calc.firstOperand + val });
+    if (val === "." && calc.operation === "") {
+      // Add decimal point to the first operand
+      if (!calc.firstOperand.includes(".") && calc.firstOperand.length < 16) {
+        setCalc({ ...calc, firstOperand: calc.firstOperand + val });
+      }
+    } else if (val === "." && calc.operation !== "") {
+      // Add decimal point to the second operand
+      if (!calc.secondOperand.includes(".") && calc.secondOperand.length < 16) {
+        setCalc({ ...calc, secondOperand: calc.secondOperand + val });
+      }
     } else {
-      setCalc({ ...calc, secondOperand: calc.secondOperand + val });
+      if (calc.operation === "") {
+        // Limit first operand to 16 digits
+        if (calc.firstOperand.length < 16) {
+          setCalc({ ...calc, firstOperand: calc.firstOperand + val });
+        }
+      } else {
+        // Limit second operand to 16 digits
+        if (calc.secondOperand.length < 16) {
+          setCalc({ ...calc, secondOperand: calc.secondOperand + val });
+        }
+      }
     }
   };
 
@@ -21,12 +40,20 @@ function App() {
       switch (val) {
         case "+":
           setCalc({ ...calc, operation: "+" });
+          break;
+
         case "-":
           setCalc({ ...calc, operation: "-" });
+          break;
+
         case "*":
           setCalc({ ...calc, operation: "*" });
+          break;
+
         case "÷":
           setCalc({ ...calc, operation: "÷" });
+          break;
+
         default:
           calc.operation;
       }
@@ -34,16 +61,62 @@ function App() {
   };
 
   const handleClear = () => {
-    setCalc({ calc, firstOperand: "", operation: "", secondOperand: "" });
+    setCalc({
+      calc,
+      firstOperand: "",
+      operation: "",
+      secondOperand: "",
+      result: "",
+    });
+  };
+
+  const handleDelete = () => {
+    if (calc.secondOperand !== "") {
+      // Delete the last character from the second operand
+      setCalc({ ...calc, secondOperand: calc.secondOperand.slice(0, -1) });
+    } else if (calc.operation !== "") {
+      // Remove the operation
+      setCalc({ ...calc, operation: "" });
+    } else if (calc.firstOperand !== "") {
+      // Delete the last character from the first operand
+      setCalc({ ...calc, firstOperand: calc.firstOperand.slice(0, -1) });
+    }
+  };
+
+  const handleCalculate = () => {
+    if (
+      calc.firstOperand !== "" &&
+      calc.operation !== "" &&
+      calc.secondOperand !== ""
+    ) {
+      const firstNum = parseFloat(calc.firstOperand);
+      const secondNum = parseFloat(calc.secondOperand);
+
+      if (calc.operation === "+") {
+        setCalc({ ...calc, result: (firstNum + secondNum).toString() });
+      } else if (calc.operation === "-") {
+        setCalc({ ...calc, result: (firstNum - secondNum).toString() });
+      } else if (calc.operation === "*") {
+        setCalc({ ...calc, result: (firstNum * secondNum).toString() });
+      } else if (calc.operation === "÷") {
+        // Check for division by zero
+        if (secondNum === 0) {
+          setCalc({ ...calc, result: "Error: Division by zero" });
+        } else {
+          setCalc({ ...calc, result: (firstNum / secondNum).toString() });
+        }
+      }
+    }
   };
 
   return (
     <main className="bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-400 h-screen flex items-center justify-center">
       <div className="calculator-box grid  w-[27rem] gap-3">
-        <div className="output-box bg-black border-2 border-white rounded-md h-28 text-white text-right font-bold p-4 text-2xl">
-          <div className="previous-operand">{calc.firstOperand}</div>
-          <div className="previous-operand">{calc.operation}</div>
-          <div className="current-operant">{calc.secondOperand}</div>
+        <div className="output-box bg-black border-2 border-white rounded-md h-28 text-white text-right font-bold p-4 text-2xl inline">
+          <div className="previous-operand">
+            {calc.firstOperand} {calc.operation} {calc.secondOperand}
+          </div>
+          <div className="current-operand">{calc.result}</div>
         </div>
         <div className="buttons-box grid grid-cols-4 gap-2">
           <Button
@@ -51,7 +124,7 @@ function App() {
             additionalClasses={"col-span-2 bg-white p-5 hover:bg-slate-200"}
             onClick={handleClear}
           />
-          <Button value={"DEL"} />
+          <Button value={"DEL"} onClick={handleDelete} />
           <Button
             value={"÷"}
             additionalClasses={"bg-orange-300 hover:bg-orange-400"}
@@ -140,10 +213,16 @@ function App() {
               handleNumClick(0);
             }}
           />
-          <Button value={"."} />
+          <Button
+            value={"."}
+            onClick={() => {
+              handleNumClick(".");
+            }}
+          />
           <Button
             value={"="}
             additionalClasses={"col-span-2 bg-white p-5 hover:bg-slate-200"}
+            onClick={handleCalculate}
           />
         </div>
       </div>
